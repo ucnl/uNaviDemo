@@ -10,11 +10,12 @@
 <div id="app">
   <header>
     <div class="brand"><h1>◈ Гидроакустическая навигация</h1></div>
-    <div class="mode-toggle">
+        <div class="mode-toggle">
       <button class="mode-btn active" data-mode="toa">TOA</button>
       <button class="mode-btn" data-mode="tdoa">TDOA</button>
       <button class="mode-btn" data-mode="usbl">USBL</button>
     </div>
+    <button id="mobile-info-btn" title="Инфо / Сигнал">ⓘ</button>
     <div class="controls-top">
       <button id="pause-btn">⏸ дрейф</button>
       <button id="demo-btn">▶ демо</button>
@@ -77,6 +78,23 @@
       <a href="https://docs.unavlab.com/uNaviDemo" target="_blank" rel="noopener">docs.unavlab.com/uNaviDemo</a>
     </span>
   </footer>
+</div>
+
+<!-- Мобильный оверлей: Инфо + Сигнал -->
+<div id="mobile-overlay" class="hidden">
+  <div class="mobile-overlay-header">
+    <div class="mobile-overlay-tabs">
+      <button class="mobile-tab active" data-tab="info">Инфо</button>
+      <button class="mobile-tab" data-tab="ir">Сигнал</button>
+    </div>
+    <button id="mobile-overlay-close">×</button>
+  </div>
+  <div class="mobile-overlay-body">
+    <div id="mobile-info-pane" class="mobile-pane"></div>
+    <div id="mobile-ir-pane" class="mobile-pane hidden">
+      <canvas id="mobile-ir-canvas"></canvas>
+    </div>
+  </div>
 </div>
 
 <div id="toast-container"></div>

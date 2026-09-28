@@ -963,10 +963,19 @@ function setResult(text, cls){
 function drawIR(){
   irCtx.fillStyle = '#040e15';
   irCtx.fillRect(0,0,IW,IH);
+  drawIRContent(irCtx, IW, IH);
+}
 
+function drawIRTo(ctx, w, h){
+  ctx.fillStyle = '#040e15';
+  ctx.fillRect(0,0,w,h);
+  drawIRContent(ctx, w, h);
+}
+
+function drawIRContent(ctx, W, H){
   if(state.mode==='toa' || state.mode==='tdoa'){
     const lanes = buoys.length;
-    const laneH = IH/lanes;
+    const laneH = H/lanes;
     const cycle = (state.mode==='toa') ? 4.0 : 5.0;
     const tc = state.t % cycle;
 
@@ -975,31 +984,31 @@ function drawIR(){
       const tArr = trueDistance(b,receiver)/C;
       const fired = tc >= tArr;
 
-      irCtx.strokeStyle = '#122e3e';
-      irCtx.beginPath();
-      irCtx.moveTo(40,y); irCtx.lineTo(IW-10,y);
-      irCtx.stroke();
+      ctx.strokeStyle = '#122e3e';
+      ctx.beginPath();
+      ctx.moveTo(40,y); ctx.lineTo(W-10,y);
+      ctx.stroke();
 
       const frac = Math.min(1, tc/cycle);
-      const x = 40 + frac*(IW-50);
+      const x = 40 + frac*(W-50);
       if(fired){
-        irCtx.fillStyle = BUOY_COLORS[i];
-        irCtx.beginPath(); irCtx.arc(x,y,4,0,Math.PI*2); irCtx.fill();
+        ctx.fillStyle = BUOY_COLORS[i];
+        ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
       } else {
-        irCtx.fillStyle = '#1c3a4a';
-        irCtx.beginPath(); irCtx.arc(x,y,2.5,0,Math.PI*2); irCtx.fill();
+        ctx.fillStyle = '#1c3a4a';
+        ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
       }
 
-      irCtx.fillStyle = BUOY_COLORS[i];
-      irCtx.font = '10px Consolas, monospace';
-      irCtx.textAlign = 'right';
-      irCtx.fillText(b.name, 32, y+3);
+      ctx.fillStyle = BUOY_COLORS[i];
+      ctx.font = '10px Consolas, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(b.name, 32, y+3);
     });
 
-    irCtx.fillStyle = '#7fb5cc';
-    irCtx.font = '10px Consolas, monospace';
-    irCtx.textAlign = 'left';
-    irCtx.fillText(`t = ${tc.toFixed(2)} с`, 6, 12);
+    ctx.fillStyle = '#7fb5cc';
+    ctx.font = '10px Consolas, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`t = ${tc.toFixed(2)} с`, 6, 12);
   }
 
   if(state.mode==='usbl'){
@@ -1011,34 +1020,32 @@ function drawIR(){
     const phase0 = (d*Math.sin(ang))/lambda * 2*Math.PI / 10;
 
     for(let k=0;k<3;k++){
-      const y0 = IH*(k+1)/4;
+      const y0 = H*(k+1)/4;
       const phase = (k-1) * phase0;
-      irCtx.strokeStyle = k===1 ? '#6fff9a' : '#6fe3ff';
-      irCtx.lineWidth = 1.5;
-      irCtx.beginPath();
-      for(let x=0;x<IW;x+=2){
+      ctx.strokeStyle = k===1 ? '#6fff9a' : '#6fe3ff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for(let x=0;x<W;x+=2){
         const y = y0 + Math.sin(x/28 + phase + state.t*3)*12;
-        if(x===0) irCtx.moveTo(x,y); else irCtx.lineTo(x,y);
+        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
-      irCtx.stroke();
-      irCtx.fillStyle = '#4a6a7a';
-      irCtx.font = '10px Consolas, monospace';
-      irCtx.textAlign = 'left';
-      irCtx.fillText(`h${k}`, 6, y0-14);
+      ctx.stroke();
+      ctx.fillStyle = '#4a6a7a';
+      ctx.font = '10px Consolas, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(`h${k}`, 6, y0-14);
     }
-    irCtx.fillStyle = '#7fb5cc';
-    irCtx.font = '10px Consolas, monospace';
-    irCtx.textAlign = 'right';
-    irCtx.fillText(`Δφ = ${(phase0*180/Math.PI).toFixed(1)}°  ·  λ≈${(lambda*10).toFixed(0)} ед.`, IW-8, 12);
+    ctx.fillStyle = '#7fb5cc';
+    ctx.font = '10px Consolas, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(`Δφ = ${(phase0*180/Math.PI).toFixed(1)}°  ·  λ≈${(lambda*10).toFixed(0)} ед.`, W-8, 12);
   }
 }
 
 // ============================================================
 //  БОКОВАЯ ПАНЕЛЬ
 // ============================================================
-function drawSidePanel(solution){
-  const p = document.getElementById('side-panel');
-
+function buildSidePanelHTML(solution){
   let html = '';
 
   if(state.mode==='toa'){
@@ -1052,7 +1059,7 @@ function drawSidePanel(solution){
         <div class="formula">R_i = c · Δt_i</div>
         <div class="desc">Пересечение <b>окружностей</b> вокруг буёв — позиция.</div>
       </div>`;
-   } else if(state.mode==='tdoa'){
+  } else if(state.mode==='tdoa'){
     html += `<h2>TDOA — Time Difference</h2>
       <div class="side-block">
         <div class="desc">
@@ -1062,7 +1069,7 @@ function drawSidePanel(solution){
         <div class="formula">ΔR_ij = c·(t_i − t_j)</div>
         <div class="desc">Геометрическое место — <b>гипербола</b>. Пересечение — позиция.</div>
       </div>
-      <div class="side-block">	    
+      <div class="side-block">
         <h2>Как читать гиперболы</h2>
         <div class="desc">
           Каждая гипербола построена по <b>паре буёв</b> и нарисована
@@ -1105,12 +1112,13 @@ function drawSidePanel(solution){
       <div class="side-block">
         <div class="desc">
           На приёмнике — <b>короткая база</b> из гидрофонов.
-          Разность фаз на элементах даёт <b>пеленг</b> на источник:
+          Разность фаз на элементах даёт <b>пеленг</b> на буй:
         </div>
         <div class="formula">Δφ = 2π · d · sin θ / λ</div>
         <div class="desc">
           Дальность измеряется <b>отдельным акустическим каналом</b>
-          той же системы — запрос-ответ между пеленгационной антенной и маяком.
+          той же системы — типично запрос-ответ между приёмником
+          и буем.
         </div>
       </div>`;
   }
@@ -1179,7 +1187,12 @@ function drawSidePanel(solution){
     <div class="desc" style="margin-top:8px">Клик по строке — выбрать цель (USBL).<br>Тащи буи и приёмник прямо на сцене.</div>
   </div>`;
 
-  p.innerHTML = html;  
+  return html;
+}
+
+function drawSidePanel(solution){
+  const p = document.getElementById('side-panel');
+  p.innerHTML = buildSidePanelHTML(solution);
 }
 
 // ============================================================
@@ -1236,6 +1249,16 @@ function frame(ts){
   drawIR();
   drawInset();
   drawSidePanel(solution);
+
+  // мобильная панель «Инфо» обновляется, если открыта
+  if(!mobileOverlay.classList.contains('hidden') && !mobileInfoPane.classList.contains('hidden')){
+    mobileInfoPane.innerHTML = buildSidePanelHTML(solution);
+  }
+  // мобильный IR
+  if(!mobileOverlay.classList.contains('hidden') && !mobileIRPane.classList.contains('hidden')){
+    resizeMobileIR();
+    drawIRTo(mobileIRCtx, MIR_W, MIR_H);
+  }
 
   requestAnimationFrame(frame);
 }
@@ -1307,6 +1330,76 @@ document.getElementById('show-wave').addEventListener('change', e=>{
   state.showWave = e.target.checked;
 });
 
+
+// ---------- мобильный оверлей ----------
+const mobileOverlay = document.getElementById('mobile-overlay');
+const mobileInfoBtn = document.getElementById('mobile-info-btn');
+const mobileOverlayClose = document.getElementById('mobile-overlay-close');
+const mobileTabs = document.querySelectorAll('.mobile-tab');
+const mobileInfoPane = document.getElementById('mobile-info-pane');
+const mobileIRPane = document.getElementById('mobile-ir-pane');
+
+function openMobileOverlay(){
+  mobileOverlay.classList.remove('hidden');
+  // переносим содержимое side-panel в мобильную панель
+  renderMobileInfo();
+  // размер канваса под оверлей
+  requestAnimationFrame(()=>{ resizeMobileIR(); });
+}
+function closeMobileOverlay(){
+  mobileOverlay.classList.add('hidden');
+}
+mobileInfoBtn.addEventListener('click', openMobileOverlay);
+mobileOverlayClose.addEventListener('click', closeMobileOverlay);
+
+mobileTabs.forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    mobileTabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    if(tab.dataset.tab==='info'){
+      mobileInfoPane.classList.remove('hidden');
+      mobileIRPane.classList.add('hidden');
+    } else {
+      mobileInfoPane.classList.add('hidden');
+      mobileIRPane.classList.remove('hidden');
+      requestAnimationFrame(()=>{ resizeMobileIR(); });
+    }
+  });
+});
+
+// ---- мобильный IR-канвас ----
+const mobileIRCanvas = document.getElementById('mobile-ir-canvas');
+const mobileIRCtx = mobileIRCanvas.getContext('2d');
+let MIR_W=0, MIR_H=0, MIR_DPR=1;
+function resizeMobileIR(){
+  const r = mobileIRPane.getBoundingClientRect();
+  if(r.width < 2 || r.height < 2) return;
+  MIR_DPR = window.devicePixelRatio||1;
+  MIR_W = r.width; MIR_H = r.height;
+  mobileIRCanvas.width = MIR_W*MIR_DPR;
+  mobileIRCanvas.height = MIR_H*MIR_DPR;
+  mobileIRCanvas.style.width = MIR_W+'px';
+  mobileIRCanvas.style.height = MIR_H+'px';
+  mobileIRCtx.setTransform(MIR_DPR,0,0,MIR_DPR,0,0);
+}
+
+// ---- рендер мобильной панели «Инфо» ----
+// переиспользует ту же логику, что drawSidePanel — генерирует HTML
+function renderMobileInfo(){
+  // временно используем ту же логику drawSidePanel, но пишем в mobileInfoPane
+  // трюк: drawSidePanel уже возвращает HTML строкой внутри себя
+  // поэтому просто пересоберём тот же контент
+  const solution = { sol: lastSolution, err: lastError };
+  const html = buildSidePanelHTML(solution);
+  mobileInfoPane.innerHTML = html;
+  // обработчики кликов по буям (делегирование)
+  // (ничего не делаем — она пересобирается каждый кадр из buildSidePanelHTML)
+}
+
+
+
+
+
 // ============================================================
 //  СТАРТ
 // ============================================================
@@ -1316,10 +1409,12 @@ document.getElementById('show-wave').addEventListener('change', e=>{
 resizeScene();
 resizeIR();
 
-document.getElementById('side-panel').addEventListener('mousedown', e=>{
+function handleBuoyRowClick(e){
   const row = e.target.closest('.buoy-row');
   if(!row) return;
   state.activeBuoy = parseInt(row.dataset.buoy, 10);
-});
+}
+document.getElementById('side-panel').addEventListener('mousedown', handleBuoyRowClick);
+document.getElementById('mobile-info-pane').addEventListener('mousedown', handleBuoyRowClick);
 
 requestAnimationFrame(frame);

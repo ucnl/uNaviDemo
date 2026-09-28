@@ -42,6 +42,9 @@ const buoys = [
   { x: -500, y: -500, name: 'B4' },
 ];
 
+let lastSolution = null;
+let lastError = 0;
+
 // ---------- сцены для демо-режима ----------
 const SCENES = [
   {
@@ -1245,14 +1248,18 @@ function frame(ts){
   drawScaleBar();
 
   const solution = updateSolution();
+  if(solution){
+    lastSolution = solution.sol;
+    lastError = solution.err;
+  }
 
   drawIR();
   drawInset();
   drawSidePanel(solution);
-
+  
   // мобильная панель «Инфо» обновляется, если открыта
   if(!mobileOverlay.classList.contains('hidden') && !mobileInfoPane.classList.contains('hidden')){
-    mobileInfoPane.innerHTML = buildSidePanelHTML(solution);
+    mobileInfoPane.innerHTML = buildSidePanelHTML({ sol: lastSolution, err: lastError });
   }
   // мобильный IR
   if(!mobileOverlay.classList.contains('hidden') && !mobileIRPane.classList.contains('hidden')){
@@ -1341,8 +1348,6 @@ const mobileIRPane = document.getElementById('mobile-ir-pane');
 
 function openMobileOverlay(){
   mobileOverlay.classList.remove('hidden');
-  // переносим содержимое side-panel в мобильную панель
-  renderMobileInfo();
   // размер канваса под оверлей
   requestAnimationFrame(()=>{ resizeMobileIR(); });
 }
@@ -1382,20 +1387,6 @@ function resizeMobileIR(){
   mobileIRCanvas.style.height = MIR_H+'px';
   mobileIRCtx.setTransform(MIR_DPR,0,0,MIR_DPR,0,0);
 }
-
-// ---- рендер мобильной панели «Инфо» ----
-// переиспользует ту же логику, что drawSidePanel — генерирует HTML
-function renderMobileInfo(){
-  // временно используем ту же логику drawSidePanel, но пишем в mobileInfoPane
-  // трюк: drawSidePanel уже возвращает HTML строкой внутри себя
-  // поэтому просто пересоберём тот же контент
-  const solution = { sol: lastSolution, err: lastError };
-  const html = buildSidePanelHTML(solution);
-  mobileInfoPane.innerHTML = html;
-  // обработчики кликов по буям (делегирование)
-  // (ничего не делаем — она пересобирается каждый кадр из buildSidePanelHTML)
-}
-
 
 
 

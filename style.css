@@ -54,10 +54,13 @@ header {
 #demo-btn.active { background: #0e6f8a; color: #fff; border-color: #128aa8; }
 
 
-
-
-
 #status { font-size: 12px; color: #7fb5cc; margin-left: auto; }
+
+
+
+/* Кнопка ⓘ и мобильный оверлей — только на мобилке */
+#mobile-info-btn { display: none; }
+#mobile-overlay { display: none; }
 
 /* ---------- панели ---------- */
 .panel {
@@ -285,10 +288,6 @@ header {
   #footer { display: none; }              /* скрыт на мобилке */
 }
 
-/* Кнопка ⓘ и мобильный оверлей — только на мобилке */
-#mobile-info-btn { display: none; }
-#mobile-overlay { display: none; }
-
 @media (max-width: 700px) {
   #mobile-overlay:not(.hidden) { display: flex; }
 }
@@ -350,6 +349,8 @@ header {
 
 #mobile-ir-pane {
   padding: 0;
+}
+#mobile-ir-pane:not(.hidden) {
   display: flex; flex-direction: column;
 }
 #mobile-ir-canvas {

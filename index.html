@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Гидроакустическая навигация — TOA / TDOA / USBL</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><h1>◈ Гидроакустическая навигация</h1></div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="toa">TOA</button>
+      <button class="mode-btn" data-mode="tdoa">TDOA</button>
+      <button class="mode-btn" data-mode="usbl">USBL</button>
+    </div>
+    <div class="controls-top">
+      <button id="pause-btn">⏸ дрейф</button>
+      <button id="demo-btn">▶ демо</button>
+      <label>σ шум:
+        <input type="range" id="noise-slider" min="0" max="30" step="0.5" value="0">
+        <span id="noise-val">0.0 м</span>
+      </label>
+      <button id="reset-btn">⟲ сброс</button>
+    </div>
+    <div id="status">режим: TOA · односторонний</div>
+  </header>
+
+  <div id="layout">
+    <div class="panel side-panel" id="side-panel"></div>
+    <div class="main-col">
+      <div class="panel scene-panel">
+        <canvas id="scene"></canvas>
+        <div id="usbl-inset" class="hidden">
+          <div class="inset-label">антенна USBL</div>
+          <canvas id="inset-canvas"></canvas>
+          <div class="inset-note">схема; реальные задержки μs, здесь замедлено</div>
+        </div>
+        <div id="demo-banner" class="hidden">
+          <div class="demo-title"></div>
+          <div class="demo-note"></div>
+        </div>
+      </div>
+      <div class="panel ir-panel"><canvas id="ir"></canvas></div>
+    </div>
+  </div>
+
+  <div id="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">скорость:</span>
+      <button class="speed-btn" data-speed="0.25">0.25×</button>
+      <button class="speed-btn active" data-speed="1">1×</button>
+      <button class="speed-btn" data-speed="2">2×</button>
+      <button class="speed-btn" data-speed="4">4×</button>
+    </div>
+    <div class="ctrl-group" id="cg-tdoa">
+      <span class="ctrl-label">TDOA:</span>
+      <label style="font-size:12px;color:#7fb5cc;">
+        <input type="checkbox" id="show-hyper" checked> гиперболы
+      </label>
+      <label style="font-size:12px;color:#7fb5cc;">
+        <input type="checkbox" id="show-wave" checked> фронты
+      </label>
+    </div>
+    <div id="result" class="pending">оценка позиции: —</div>
+  </div>
+
+  <footer id="footer">
+    <span>
+      <a href="https://unavlab.com/" target="_blank" rel="noopener">by unavlab</a>
+      <a href="https://github.com/ucnl/uRay" target="_blank" rel="noopener">uRay on GitHub</a>
+      · <a href="https://github.com/ucnl/uRay/blob/main/CHANGELOG.md" target="_blank" rel="noopener" id="app-version">v0.5.0</a>
+      · © 2020-2026 Alek Dikarev
+    </span>
+    <span>
+      <a href="https://docs.unavlab.com/uRay" target="_blank" rel="noopener">docs.unavlab.com/uRay</a>
+    </span>
+  </footer>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

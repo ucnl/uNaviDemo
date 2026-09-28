@@ -1,0 +1,262 @@
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  padding: 12px;
+  background: #0a1620; color: #cfe8f5;
+  font-family: Consolas, monospace;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+#app { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+/* ---------- header ---------- */
+header {
+  display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.brand { display: flex; gap: 14px; align-items: center; }
+.brand h1 { margin: 0; font-size: 18px; color: #6fe3ff; }
+
+.mode-toggle {
+  display: inline-flex; border: 1px solid #1c5a72; border-radius: 3px; overflow: hidden;
+}
+.mode-btn {
+  background: #071018; color: #7fb5cc; border: none;
+  padding: 4px 12px; cursor: pointer; font-family: inherit; font-size: 12px;
+  transition: background 0.15s, color 0.15s;
+}
+.mode-btn:hover { background: #0e2a3a; }
+.mode-btn.active { background: #0e6f8a; color: #fff; }
+
+.controls-top { display: flex; gap: 12px; align-items: center; }
+.controls-top label { font-size: 13px; }
+#reset-btn {
+  background: #0e3f52; color: #cfe8f5; border: 1px solid #1c5a72;
+  padding: 4px 12px; cursor: pointer; font-family: inherit; font-size: 13px;
+}
+#reset-btn:hover { background: #16596f; }
+#pause-btn {
+  background: #071018; color: #7fb5cc; border: 1px solid #1c5a72;
+  padding: 4px 12px; cursor: pointer; font-family: inherit; font-size: 13px;
+  min-width: 76px;
+}
+#pause-btn:hover { background: #0e2a3a; color: #cfe8f5; }
+#pause-btn.paused { color: #ffd24a; border-color: #5a4a1c; }
+
+#demo-btn {
+  background: #071018; color: #7fb5cc; border: 1px solid #1c5a72;
+  padding: 4px 12px; cursor: pointer; font-family: inherit; font-size: 13px;
+  min-width: 76px;
+}
+#demo-btn:hover { background: #0e2a3a; color: #cfe8f5; }
+#demo-btn.active { background: #0e6f8a; color: #fff; border-color: #128aa8; }
+
+
+
+
+
+#status { font-size: 12px; color: #7fb5cc; margin-left: auto; }
+
+/* ---------- панели ---------- */
+.panel {
+  background: #071018;
+  border: 1px solid #1c3a4a;
+  position: relative;
+  overflow: hidden;
+}
+.panel canvas { display: block; width: 100%; height: 100%; }
+
+#layout { display: flex; gap: 12px; flex: 1; min-height: 0; }
+.side-panel {
+  flex: 0 0 260px;
+  display: flex; flex-direction: column;
+  padding: 10px 12px; overflow-y: auto;
+  font-size: 12px;
+}
+.main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.scene-panel { flex: 1; min-height: 0; cursor: crosshair; position: relative; }
+.ir-panel { flex: 0 0 110px; }
+
+/* ---------- левая панель ---------- */
+.side-panel h2 {
+  font-size: 11px; letter-spacing: 1.5px;
+  color: #6fe3ff; margin: 0 0 8px;
+  text-transform: uppercase; font-weight: 600;
+}
+.side-block { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #122e3e; }
+.side-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.formula {
+  color: #cfe8f5; font-size: 12px;
+  background: #040e15; border: 1px solid #122e3e;
+  padding: 6px 8px; margin: 4px 0;
+  white-space: pre; overflow-x: auto;
+}
+
+.kv { display: flex; justify-content: space-between; margin: 3px 0; gap: 8px; }
+.kv .k { color: #7fb5cc; }
+.kv .v { color: #cfe8f5; font-variant-numeric: tabular-nums; }
+.kv .v.good { color: #6fff9a; }
+.kv .v.warn { color: #ffd24a; }
+.kv .v.bad  { color: #ff8080; }
+
+.desc { color: #7fb5cc; line-height: 1.5; font-size: 11px; }
+.desc b { color: #cfe8f5; }
+
+.buoy-list { display: flex; flex-direction: column; gap: 4px; }
+.buoy-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 6px; cursor: pointer;
+  border: 1px solid #122e3e; background: #040e15;
+  transition: background 0.15s, border-color 0.15s;
+}
+.buoy-row:hover { background: #0a1e2a; border-color: #1c5a72; }
+.buoy-row.active { background: #0e2a3a; border-color: #128aa8; }
+.buoy-row .swatch { width: 10px; height: 10px; flex: none; }
+.buoy-row .name { color: #cfe8f5; flex: none; width: 26px; }
+.buoy-row .coord { color: #7fb5cc; font-size: 11px; margin-left: auto; font-variant-numeric: tabular-nums; }
+
+/* ---------- controls ---------- */
+#controls {
+  display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+  padding-top: 8px;
+}
+.ctrl-group {
+  display: flex; gap: 10px; align-items: center;
+  padding-right: 14px; border-right: 1px solid #1c3a4a;
+}
+.ctrl-group:last-of-type { border-right: none; }
+.ctrl-label { font-size: 12px; color: #7fb5cc; }
+
+.speed-btn {
+  background: #071018; color: #7fb5cc; border: 1px solid #1c5a72;
+  padding: 3px 8px; cursor: pointer; font-family: inherit; font-size: 12px;
+  min-width: 36px;
+}
+.speed-btn:hover { background: #0e2a3a; color: #cfe8f5; }
+.speed-btn.active { background: #0e6f8a; color: #fff; border-color: #128aa8; }
+
+#noise-slider { width: 140px; vertical-align: middle; }
+
+#result { font-size: 13px; margin-left: auto; }
+#result.ok { color: #6fff9a; }
+#result.fail { color: #ff8080; }
+#result.pending { color: #ffd24a; }
+
+/* ---------- USBL мини-панель ---------- */
+#usbl-inset {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 260px; height: 180px;
+  background: #040e15;
+  border: 1px solid #1c5a72;
+  z-index: 5;
+  pointer-events: none;
+}
+#usbl-inset.hidden { display: none; }
+#usbl-inset canvas { display: block; width: 100%; height: 100%; }
+#usbl-inset .inset-label {
+  position: absolute; top: 4px; left: 6px;
+  font-size: 10px; color: #6fe3ff; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+#usbl-inset .inset-note {
+  position: absolute; bottom: 3px; left: 6px;
+  font-size: 9px; color: #4a6a7a; font-style: italic;
+}
+
+/* ---------- footer ---------- */
+#footer {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap;
+  padding-top: 8px; margin-top: 8px;
+  border-top: 1px solid #1c3a4a;
+  font-size: 11px; color: #4a6a7a;
+}
+#footer a {
+  color: #7fb5cc; text-decoration: none;
+  border-bottom: 1px dotted #2a4a5a;
+  margin-right: 4px;
+}
+#footer a:hover { color: #6fe3ff; border-bottom-color: #6fe3ff; }
+
+/* ---------- тосты ---------- */
+#toast-container {
+  position: fixed; right: 16px; bottom: 60px;
+  display: flex; flex-direction: column-reverse; gap: 6px;
+  pointer-events: none; z-index: 100;
+}
+.toast {
+  background: #0e3f52; color: #cfe8f5;
+  border: 1px solid #128aa8;
+  padding: 8px 14px; font-size: 13px;
+  border-radius: 3px;
+  opacity: 0; transform: translateX(20px);
+  transition: opacity 0.3s, transform 0.3s;
+  box-shadow: 0 2px 8px #00000080;
+}
+.toast.visible { opacity: 1; transform: translateX(0); }
+
+#demo-banner {
+  position: absolute;
+  left: 50%; bottom: 20px;
+  transform: translateX(-50%);
+  max-width: min(560px, 80%);
+  background: rgba(4, 14, 21, 0.82);
+  border: 1px solid #1c5a72;
+  padding: 10px 18px;
+  z-index: 6;
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.4s;
+}
+#demo-banner.hidden { display: none; }
+#demo-banner .demo-title {
+  color: #6fe3ff;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+#demo-banner .demo-note {
+  color: #cfe8f5;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* ---------- мобильная раскладка ---------- */
+@media (max-width: 700px) {
+  body { padding: 6px; }
+  header { gap: 8px; margin-bottom: 6px; }
+  .brand h1 { font-size: 15px; }
+  .mode-btn { padding: 3px 8px; font-size: 11px; }
+  .controls-top { gap: 6px; flex-wrap: wrap; }
+  .controls-top label, #reset-btn, #pause-btn { font-size: 12px; }
+  #status { font-size: 11px; flex-basis: 100%; margin-left: 0; }
+  
+  #demo-btn { font-size: 12px; min-width: 60px; padding: 3px 8px; }
+  #demo-banner {
+    bottom: 10px; padding: 8px 12px;
+    max-width: 90%;
+  }
+  #demo-banner .demo-title { font-size: 12px; }
+  #demo-banner .demo-note  { font-size: 11px; }
+
+  #layout { flex-direction: column; gap: 6px; }
+  .main-col { order: 1; flex: 1; min-height: 0; gap: 6px; }
+  .side-panel { order: 2; flex: 0 0 auto; max-height: 200px; font-size: 11px; }
+  .scene-panel { flex: 1; min-height: 0; }
+  .ir-panel { flex: 0 0 80px; }
+
+  #controls { gap: 10px; padding-top: 6px; font-size: 12px; }
+  .ctrl-group { padding-right: 8px; gap: 6px; }
+  #noise-slider { width: 80px; }
+  #result { margin-left: 0; flex-basis: 100%; }
+
+  #usbl-inset { width: 200px; height: 140px; top: 6px; right: 6px; }
+  #usbl-inset .inset-note { font-size: 8px; }
+
+  #footer { font-size: 10px; padding-top: 6px; }
+}
